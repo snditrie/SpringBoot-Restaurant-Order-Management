@@ -30,13 +30,9 @@ public class TransactionTypeController {
         return transactionTypeService.getAll();
     }
 
-    @PutMapping(path = APIurl.PATH_VAR_ID)
-    public String updateTransTypeDesc(
-            @PathVariable EnumTransactionType id,
-            @RequestParam(name = "newDescription") String newDescription
-    ){
-        transactionTypeService.updateDescriptionById(id, newDescription);
-        return "description transaction type " + id + " has been updated";
+    @PutMapping
+    public TransactionType updateTransTypeDesc(@RequestBody TransactionType transactionType){
+        return transactionTypeService.update(transactionType);
     }
 
     @DeleteMapping(path = APIurl.PATH_VAR_ID)

@@ -10,6 +10,6 @@ public interface TransactionTypeService {
     TransactionType create(TransactionType transactionType);
     TransactionType getById(EnumTransactionType id);
     List<TransactionType> getAll();
-    void updateDescriptionById(EnumTransactionType id, String newDescription);
+    TransactionType update(TransactionType transactionType);
     void deleteById(EnumTransactionType id);
 }

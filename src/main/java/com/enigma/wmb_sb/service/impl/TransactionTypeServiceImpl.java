@@ -30,9 +30,10 @@ public class TransactionTypeServiceImpl implements TransactionTypeService {
     }
 
     @Override
-    public void updateDescriptionById(EnumTransactionType id, String newDescription) {
-        findByIdOrThrowNotFound(id);
-        transactionTypeRepository.updateDescription(id, newDescription);
+    public TransactionType update(TransactionType transactionType) {
+        findByIdOrThrowNotFound(transactionType.getId());
+        return transactionTypeRepository.saveAndFlush(transactionType);
+
     }
 
     @Override
