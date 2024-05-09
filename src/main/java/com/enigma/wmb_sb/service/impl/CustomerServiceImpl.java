@@ -1,6 +1,6 @@
 package com.enigma.wmb_sb.service.impl;
 
-import com.enigma.wmb_sb.entity.Customer;
+import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.repository.CustomerRepository;
 import com.enigma.wmb_sb.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +40,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customerToDelete);
     }
 
-//    @Override
-//    public void updateStatusById(String id, Boolean memberStatus) {
-//        findByIdOrThrowNotFound(id);
-//        customerRepository.up
-//    }
+    @Override
+    public void updateStatusById(String id, Boolean memberStatus) {
+        findByIdOrThrowNotFound(id);
+        customerRepository.updateStatus(id, memberStatus);
+    }
 
     public Customer findByIdOrThrowNotFound(String id){
         return customerRepository.findById(id)

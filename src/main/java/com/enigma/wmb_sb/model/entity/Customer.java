@@ -1,4 +1,4 @@
-package com.enigma.wmb_sb.entity;
+package com.enigma.wmb_sb.model.entity;
 
 import com.enigma.wmb_sb.constant.ConstantTable;
 import jakarta.persistence.*;

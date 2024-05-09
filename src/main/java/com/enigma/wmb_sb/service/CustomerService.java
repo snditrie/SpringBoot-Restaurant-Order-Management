@@ -1,6 +1,6 @@
 package com.enigma.wmb_sb.service;
 
-import com.enigma.wmb_sb.entity.Customer;
+import com.enigma.wmb_sb.model.entity.Customer;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public interface CustomerService {
     List<Customer> getAll();
     Customer update(Customer customer);
     void deleteById(String id);
-//    void updateStatusById(String id, Boolean memberStatus);
+    void updateStatusById(String id, Boolean memberStatus);
 }

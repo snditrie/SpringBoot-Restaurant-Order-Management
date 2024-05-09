@@ -1,4 +1,4 @@
-package com.enigma.wmb_sb.entity;
+package com.enigma.wmb_sb.model.entity;
 
 import com.enigma.wmb_sb.constant.ConstantTable;
 import jakarta.persistence.*;
@@ -6,15 +6,12 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = ConstantTable.MENU)
-public class Menu {
+@Table(name = ConstantTable.TABLE)
+public class TableResto {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "menu_name")
+    @Column(name = "table_name")
     private String name;
-
-    @Column(name = "price")
-    private Long price;
 }

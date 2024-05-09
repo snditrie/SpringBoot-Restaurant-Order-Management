@@ -1,6 +1,6 @@
 package com.enigma.wmb_sb.service.impl;
 
-import com.enigma.wmb_sb.entity.Menu;
+import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.repository.MenuRepository;
 import com.enigma.wmb_sb.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +20,30 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Menu getById(String id) {
-        return null;
+        return findByIdOrThrowNotFound(id);
     }
 
     @Override
     public List<Menu> getAll() {
-        return List.of();
+        return menuRepository.findAll();
     }
 
     @Override
     public Menu update(Menu menu) {
-        return null;
+        findByIdOrThrowNotFound(menu.getId());
+        return menuRepository.saveAndFlush(menu);
     }
 
     @Override
     public void deleteById(String id) {
+        Menu menuToDelete = findByIdOrThrowNotFound(id);
+        menuRepository.delete(menuToDelete);
+    }
 
+    @Override
+    public void updateMenuPrice(String id, Integer newPrice) {
+        findByIdOrThrowNotFound(id);
+        menuRepository.updatePrice(id, newPrice);
     }
 
     public Menu findByIdOrThrowNotFound(String id){

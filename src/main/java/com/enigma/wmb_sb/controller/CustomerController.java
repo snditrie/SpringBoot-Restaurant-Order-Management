@@ -1,7 +1,7 @@
 package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
-import com.enigma.wmb_sb.entity.Customer;
+import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +38,15 @@ public class CustomerController {
     public String deleteCustomerById(@PathVariable String id){
         customerService.deleteById(id);
         return "customer with id: " + id + " has been deleted";
+    }
+
+    @PutMapping(path = APIurl.PATH_VAR_ID)
+    public String updateMemberStatusById(
+            @PathVariable String id,
+            @RequestParam(name = "isMember") Boolean memberStatus
+    ){
+        customerService.updateStatusById(id, memberStatus);
+        return "member status with id: " + id + " has been updated";
     }
 
 }
