@@ -15,6 +15,6 @@ public class Menu {
     @Column(name = "menu_name")
     private String name;
 
-    @Column(name = "menu_price")
+    @Column(name = "menu_price", updatable = false, nullable = false)
     private Integer price;
 }
