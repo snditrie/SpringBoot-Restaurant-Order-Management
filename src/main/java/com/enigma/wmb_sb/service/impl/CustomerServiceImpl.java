@@ -1,9 +1,12 @@
 package com.enigma.wmb_sb.service.impl;
 
+import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.repository.CustomerRepository;
 import com.enigma.wmb_sb.service.CustomerService;
+import com.enigma.wmb_sb.specification.CustomerSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +27,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getAll() {
-        return customerRepository.findAll();
+    public List<Customer> getAll(SearchCustomerRequest request) {
+        Specification<Customer> customerSpecification = CustomerSpecification.getSpecification(request);
+        if(request.getName() == null && request.getPhone() == null && request.getMemberStatus() == null){
+            return customerRepository.findAll();
+        }
+        return customerRepository.findAll(customerSpecification);
     }
 
     @Override
@@ -38,12 +45,6 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteById(String id) {
         Customer customerToDelete = findByIdOrThrowNotFound(id);
         customerRepository.delete(customerToDelete);
-    }
-
-    @Override
-    public void updateStatusById(String id, Boolean memberStatus) {
-        findByIdOrThrowNotFound(id);
-        customerRepository.updateStatus(id, memberStatus);
     }
 
     public Customer findByIdOrThrowNotFound(String id){

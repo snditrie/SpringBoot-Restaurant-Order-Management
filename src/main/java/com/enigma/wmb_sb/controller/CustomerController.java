@@ -1,6 +1,7 @@
 package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
+import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,17 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<Customer> getallCustomer(){
-        return customerService.getAll();
+    public List<Customer> getallCustomer(
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "phone", required = false) String phone,
+            @RequestParam(name = "member", required = false) Boolean member
+    ){
+        SearchCustomerRequest request = SearchCustomerRequest.builder()
+                .name(name)
+                .phone(phone)
+                .memberStatus(member)
+                .build();
+        return customerService.getAll(request);
     }
 
     @PutMapping
@@ -40,13 +50,6 @@ public class CustomerController {
         return "customer with id: " + id + " has been deleted";
     }
 
-    @PutMapping(path = APIurl.PATH_VAR_ID)
-    public String updateMemberStatusById(
-            @PathVariable String id,
-            @RequestParam(name = "isMember") Boolean memberStatus
-    ){
-        customerService.updateStatusById(id, memberStatus);
-        return "member status with id: " + id + " has been updated";
-    }
+
 
 }

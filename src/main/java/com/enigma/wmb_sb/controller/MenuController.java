@@ -1,6 +1,7 @@
 package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
+import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
 import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,15 @@ public class MenuController {
     }
 
     @GetMapping
-    public List<Menu> getAllMenu(){
-        return menuService.getAll();
+    public List<Menu> getAllMenu(
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "price", required = false) Long price
+    ){
+        SearchMenuRequest request = SearchMenuRequest.builder()
+                .name(name)
+                .price(price)
+                .build();
+        return menuService.getAll(request);
     }
 
     @PutMapping

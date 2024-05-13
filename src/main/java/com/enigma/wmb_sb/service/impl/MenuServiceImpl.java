@@ -1,9 +1,12 @@
 package com.enigma.wmb_sb.service.impl;
 
+import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
 import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.repository.MenuRepository;
 import com.enigma.wmb_sb.service.MenuService;
+import com.enigma.wmb_sb.specification.MenuSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +27,12 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<Menu> getAll() {
-        return menuRepository.findAll();
+    public List<Menu> getAll(SearchMenuRequest request) {
+        Specification<Menu> menuSpecification = MenuSpecification.getSpecification(request);
+        if(request.getName() == null && request.getPrice() == null){
+            return menuRepository.findAll();
+        }
+        return menuRepository.findAll(menuSpecification);
     }
 
     @Override
