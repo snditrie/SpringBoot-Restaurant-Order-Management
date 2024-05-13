@@ -28,8 +28,8 @@ public class CustomerController {
     @GetMapping
     public List<Customer> getallCustomer(
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "member", required = false) Boolean member
+            @RequestParam(name = "phoneNumber", required = false) String phone,
+            @RequestParam(name = "isMember", required = false) Boolean member
     ){
         SearchCustomerRequest request = SearchCustomerRequest.builder()
                 .name(name)
@@ -48,6 +48,15 @@ public class CustomerController {
     public String deleteCustomerById(@PathVariable String id){
         customerService.deleteById(id);
         return "customer with id: " + id + " has been deleted";
+    }
+
+    @PutMapping(path = APIurl.PATH_VAR_ID)
+    public String updateMemberStatusById(
+            @PathVariable String id,
+            @RequestParam(name = "isMember") Boolean memberStatus
+    ){
+        customerService.updateStatusById(id, memberStatus);
+        return "member status with id: " + id + " has been updated";
     }
 
 

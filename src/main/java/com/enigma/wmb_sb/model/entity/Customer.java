@@ -2,9 +2,12 @@ package com.enigma.wmb_sb.model.entity;
 
 import com.enigma.wmb_sb.constant.ConstantTable;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = ConstantTable.CUSTOMER)
 public class Customer {

@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SearchCustomerRequest {
-    private String name;
-    private String phone;
-    private Boolean memberStatus;
+public class BillRequest {
+    private String customerId;
+    private List<BillDetailRequest> billDetails;
 }

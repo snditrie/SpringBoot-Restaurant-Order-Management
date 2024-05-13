@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SearchCustomerRequest {
-    private String name;
-    private String phone;
-    private Boolean memberStatus;
+public class BillDetailRequest {
+    private String menuId;
+    private Integer qty;
 }
