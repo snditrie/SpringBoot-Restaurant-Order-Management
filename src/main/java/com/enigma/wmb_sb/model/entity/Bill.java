@@ -34,7 +34,7 @@ public class Bill {
     @JoinColumn(name = "trans_type_id")
     private TransactionType transactionTypeId;
 
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "billId")
     @JsonManagedReference
     private List<BillDetail> billDetails;
 }
