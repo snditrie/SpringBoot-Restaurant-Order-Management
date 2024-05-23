@@ -21,10 +21,6 @@ public class MenuSpecification {
                 predicates.add(namePredicate);
             }
 
-            if(request.getPrice() != null){
-                Predicate pricePredicate = criteriaBuilder.equal(root.get("price"), request.getPrice());
-                predicates.add(pricePredicate);
-            }
             return query.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{}))).getRestriction();
         };
     }

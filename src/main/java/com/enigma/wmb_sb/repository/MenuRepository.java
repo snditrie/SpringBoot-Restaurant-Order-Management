@@ -9,9 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 @Transactional
 public interface MenuRepository extends JpaRepository<Menu, String>, JpaSpecificationExecutor<Menu> {
+    List<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Long priceStart, Long priceEnd);
+
     @Modifying
     @Query(value = "UPDATE m_menu SET menu_price = :price WHERE id = :id", nativeQuery = true)
     void updatePrice(@Param("id") String id, @Param("price") Integer newPrice);

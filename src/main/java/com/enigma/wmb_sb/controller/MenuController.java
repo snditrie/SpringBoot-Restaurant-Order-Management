@@ -28,11 +28,13 @@ public class MenuController {
     @GetMapping
     public List<Menu> getAllMenu(
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "price", required = false) Long price
+            @RequestParam(name = "priceStart", required = false) Long priceStart,
+            @RequestParam(name = "priceEnd", required = false) Long priceEnd
     ){
         SearchMenuRequest request = SearchMenuRequest.builder()
                 .name(name)
-                .price(price)
+                .priceStart(priceStart)
+                .priceEnd(priceEnd)
                 .build();
         return menuService.getAll(request);
     }

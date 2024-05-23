@@ -7,5 +7,6 @@ import lombok.Data;
 @Builder
 public class SearchMenuRequest {
     private String name;
-    private Long price;
+    private Long priceStart;
+    private Long priceEnd;
 }

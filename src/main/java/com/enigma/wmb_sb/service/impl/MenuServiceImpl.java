@@ -28,11 +28,26 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Menu> getAll(SearchMenuRequest request) {
-        Specification<Menu> menuSpecification = MenuSpecification.getSpecification(request);
-        if(request.getName() == null && request.getPrice() == null){
+
+        if(     request == null ||
+                request.getName() == null &&
+                request.getPriceStart() == null &&
+                request.getPriceEnd() == null) {
+
             return menuRepository.findAll();
+        } else {
+            if(     request.getName() != null &&
+                    request.getPriceStart() != null &&
+                    request.getPriceEnd() != null) {
+
+                return menuRepository.findAllByNameContainingIgnoreCaseAndPriceBetween(request.getName(), request.getPriceStart(), request.getPriceEnd());
+            } else {
+                Specification<Menu> menuSpecification = MenuSpecification.getSpecification(request);
+                List<Menu> filteredMenus = menuRepository.findAll(menuSpecification);
+
+                return filteredMenus.isEmpty() ? menuRepository.findAll() : filteredMenus;
+            }
         }
-        return menuRepository.findAll(menuSpecification);
     }
 
     @Override
