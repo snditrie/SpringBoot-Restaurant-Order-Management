@@ -1,10 +1,19 @@
 package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
+import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
+import com.enigma.wmb_sb.model.dto.response.CommonResponse;
+import com.enigma.wmb_sb.model.dto.response.PagingResponse;
+import com.enigma.wmb_sb.model.dto.response.SearchCustomerResponse;
+import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
 import com.enigma.wmb_sb.model.entity.Customer;
+import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,47 +25,108 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public Customer addNewMenu(@RequestBody Customer customer){
-        return customerService.create(customer);
+    public ResponseEntity<CommonResponse<SearchCustomerResponse>> addNewMenu(@RequestBody SearchCustomerRequest customer){
+        SearchCustomerResponse newCustomer = customerService.create(customer);
+        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message(ResponseMessage.SUCCESS_SAVE_DATA)
+                .data(newCustomer)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping(path = APIurl.PATH_VAR_ID)
-    public Customer getCustomerById(@PathVariable String id){
-        return customerService.getById(id);
+    public ResponseEntity<CommonResponse<SearchCustomerResponse>> getCustomerById(@PathVariable String id){
+        SearchCustomerResponse getCustomer = customerService.getById(id);
+        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(getCustomer)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public List<Customer> getallCustomer(
+    public ResponseEntity<CommonResponse<List<SearchCustomerResponse>>> getallCustomer(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "phoneNumber", required = false) String phone,
-            @RequestParam(name = "isMember", required = false) Boolean member
+            @RequestParam(name = "isMember", required = false) Boolean member,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", defaultValue = "asc") String direction
+
     ){
         SearchCustomerRequest request = SearchCustomerRequest.builder()
                 .name(name)
                 .phone(phone)
                 .memberStatus(member)
+                .page(page)
+                .size(size)
+                .sortBy(sortBy)
+                .direction(direction)
                 .build();
-        return customerService.getAll(request);
+        Page<Customer> allCustomer = customerService.getAll(request);
+
+        List<SearchCustomerResponse> customerResponses = allCustomer.getContent().stream()
+                .map(cs -> new SearchCustomerResponse(
+                        cs.getId(),
+                        cs.getName(),
+                        cs.getPhoneNumber(),
+                        cs.getIsMember()
+                )).toList();
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .totalPages(allCustomer.getTotalPages())
+                .totalElements(allCustomer.getTotalElements())
+                .page(allCustomer.getPageable().getPageNumber() + 1)
+                .size(allCustomer.getPageable().getPageSize())
+                .hasNext(allCustomer.hasNext())
+                .hasPrevious(allCustomer.hasPrevious())
+                .build();
+
+        CommonResponse<List<SearchCustomerResponse>> response = CommonResponse.<List<SearchCustomerResponse>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(customerResponses)
+                .paging(pagingResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping
-    public Customer updateCustomer(@RequestBody Customer customer){
-        return customerService.update(customer);
+    public ResponseEntity<CommonResponse<SearchCustomerResponse>> updateCustomer(@RequestBody SearchCustomerRequest request){
+        SearchCustomerResponse updateCustomer = customerService.update(request);
+        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .data(updateCustomer)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping(path = APIurl.PATH_VAR_ID)
-    public String deleteCustomerById(@PathVariable String id){
+    public ResponseEntity<CommonResponse<?>> deleteCustomerById(@PathVariable String id){
         customerService.deleteById(id);
-        return "customer with id: " + id + " has been deleted";
+        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping(path = APIurl.PATH_VAR_ID)
-    public String updateMemberStatusById(
+    public ResponseEntity<CommonResponse<?>> updateMemberStatusById(
             @PathVariable String id,
             @RequestParam(name = "isMember") Boolean memberStatus
     ){
         customerService.updateStatusById(id, memberStatus);
-        return "member status with id: " + id + " has been updated";
+        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
 

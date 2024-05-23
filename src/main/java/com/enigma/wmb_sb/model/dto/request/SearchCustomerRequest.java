@@ -10,7 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SearchCustomerRequest {
+    private String id;
     private String name;
     private String phone;
     private Boolean memberStatus;
+
+    private Integer page;
+    private Integer size;
+
+    private String sortBy;
+    private String direction;
 }

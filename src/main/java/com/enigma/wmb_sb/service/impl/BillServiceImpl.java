@@ -30,7 +30,7 @@ public class BillServiceImpl implements BillService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BillResponse create(BillRequest request) {
-        Customer customer = customerService.getById(request.getCustomerId());
+        Customer customer = customerService.entityById(request.getCustomerId());
         TransactionType transactionType = transactionTypeService.getById(EnumTransactionType.valueOf(request.getTransTypeId()));
         TableResto tableResto = tableRestoService.getById(request.getTableRestoId());
 
