@@ -1,5 +1,6 @@
 package com.enigma.wmb_sb.service.impl;
 
+import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
 import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
 import com.enigma.wmb_sb.model.entity.Menu;
@@ -12,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,11 +26,16 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public SearchMenuResponse create(Menu menu) {
+        if(menuRepository.existsByName(menu.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
+        }
+
         Menu newMenu = Menu.builder()
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .build();
         menuRepository.saveAndFlush(newMenu);
+
         return SearchMenuResponse.builder()
                 .id(newMenu.getId())
                 .name(newMenu.getName())
@@ -43,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public SearchMenuResponse getById(String id) {
         Menu menuFound = menuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("menu not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
         return SearchMenuResponse.builder()
                 .id(menuFound.getId())
                 .name(menuFound.getName())
@@ -78,12 +86,19 @@ public class MenuServiceImpl implements MenuService {
 
                 Page<Menu> filteredMenusByPrice = menuRepository.findAllByNameContainingIgnoreCaseAndPriceBetween(
                         request.getName(), request.getPriceStart(), request.getPriceEnd(), pageable);
-                return filteredMenusByPrice.isEmpty() ? menuRepository.findAll(pageable) : filteredMenusByPrice;
+                if(filteredMenusByPrice.isEmpty()) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+                } else {
+                    return filteredMenusByPrice;
+                }
             } else {
                 Specification<Menu> menuSpecification = MenuSpecification.getSpecification(request);
                 Page<Menu> filteredMenus = menuRepository.findAll(menuSpecification, pageable);
-
-                return filteredMenus.isEmpty() ? menuRepository.findAll(pageable) : filteredMenus;
+                if(filteredMenus.isEmpty()) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+                } else {
+                    return filteredMenus;
+                }
             }
         }
     }
@@ -113,6 +128,6 @@ public class MenuServiceImpl implements MenuService {
 
     public Menu findByIdOrThrowNotFound(String id){
         return menuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("menu not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }

@@ -5,8 +5,6 @@ import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
 import com.enigma.wmb_sb.model.entity.Menu;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface MenuService {
     SearchMenuResponse create(Menu menu);
     SearchMenuResponse getById(String id);
