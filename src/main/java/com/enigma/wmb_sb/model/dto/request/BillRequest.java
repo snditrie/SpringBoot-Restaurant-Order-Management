@@ -13,5 +13,7 @@ import java.util.List;
 @Builder
 public class BillRequest {
     private String customerId;
+    private String transTypeId;
+    private String tableRestoId;
     private List<BillDetailRequest> billDetails;
 }

@@ -3,15 +3,10 @@ package com.enigma.wmb_sb.service.impl;
 import com.enigma.wmb_sb.model.dto.request.BillRequest;
 import com.enigma.wmb_sb.model.dto.response.BillDetailResponse;
 import com.enigma.wmb_sb.model.dto.response.BillResponse;
-import com.enigma.wmb_sb.model.entity.Bill;
-import com.enigma.wmb_sb.model.entity.BillDetail;
-import com.enigma.wmb_sb.model.entity.Customer;
-import com.enigma.wmb_sb.model.entity.Menu;
+import com.enigma.wmb_sb.model.enm.EnumTransactionType;
+import com.enigma.wmb_sb.model.entity.*;
 import com.enigma.wmb_sb.repository.BillRepository;
-import com.enigma.wmb_sb.service.BillDetailService;
-import com.enigma.wmb_sb.service.BillService;
-import com.enigma.wmb_sb.service.CustomerService;
-import com.enigma.wmb_sb.service.MenuService;
+import com.enigma.wmb_sb.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,13 +23,20 @@ public class BillServiceImpl implements BillService {
     private final BillDetailService billDetailService;
     private final CustomerService customerService;
     private final MenuService menuService;
+    private final TransactionTypeService transactionTypeService;
+    private final TableRestoService tableRestoService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BillResponse create(BillRequest request) {
         Customer customer = customerService.getById(request.getCustomerId());
+        TransactionType transactionType = transactionTypeService.getById(EnumTransactionType.valueOf(request.getTransTypeId()));
+        TableResto tableResto = tableRestoService.getById(request.getTableRestoId());
+
         Bill bill = Bill.builder()
                 .customerId(customer)
+                .transactionTypeId(transactionType)
+                .tableRestoId(tableResto)
                 .transDate(new Date())
                 .build();
         billRepository.saveAndFlush(bill);
@@ -63,6 +65,8 @@ public class BillServiceImpl implements BillService {
         return BillResponse.builder()
                 .id(bill.getId())
                 .customerId(bill.getCustomerId().getId())
+                .transTypeId(bill.getTransactionTypeId().getId().toString())
+                .tableRestoId(bill.getTableRestoId().getId())
                 .transDate(bill.getTransDate())
                 .billDetails(billDetailResponse)
                 .build();
