@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface MenuRepository extends JpaRepository<Menu, String>, JpaSpecificationExecutor<Menu> {
-    Page<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Long priceStart, Long priceEnd, Pageable pageable);
+    Page<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Integer priceStart, Integer priceEnd, Pageable pageable);
     Boolean existsByName(String name);
 
     @Modifying

@@ -8,6 +8,7 @@ import com.enigma.wmb_sb.repository.MenuRepository;
 import com.enigma.wmb_sb.service.MenuService;
 import com.enigma.wmb_sb.specification.MenuSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,25 +22,26 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
 
     @Override
-    public SearchMenuResponse create(Menu menu) {
-        if(menuRepository.existsByName(menu.getName())) {
+    public SearchMenuResponse create(SearchMenuRequest request) {
+        if(menuRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
         }
 
         Menu newMenu = Menu.builder()
-                .name(menu.getName())
-                .price(menu.getPrice())
+                .name(request.getName())
+                .price(request.getPrice())
                 .build();
         menuRepository.saveAndFlush(newMenu);
 
         return SearchMenuResponse.builder()
                 .id(newMenu.getId())
                 .name(newMenu.getName())
-                .price(newMenu.getPrice().longValue())
+                .price(newMenu.getPrice())
                 .build();
     }
 
@@ -55,7 +57,7 @@ public class MenuServiceImpl implements MenuService {
         return SearchMenuResponse.builder()
                 .id(menuFound.getId())
                 .name(menuFound.getName())
-                .price(menuFound.getPrice().longValue())
+                .price(menuFound.getPrice())
                 .build();
     }
 
@@ -64,15 +66,17 @@ public class MenuServiceImpl implements MenuService {
         if(request.getPage() <= 0) {
             request.setPage(1);
         }
+        log.info("Check page: {}", request.getPage());
 
         String validSortBy;
-        if("name".equalsIgnoreCase(request.getSortBy())) {
+        if("name".equalsIgnoreCase(request.getSortBy()) || "price".equalsIgnoreCase(request.getSortBy())) {
             validSortBy = request.getSortBy();
         } else {
             validSortBy = "name";
         }
         Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), validSortBy);
-        Pageable pageable = PageRequest.of((request.getPage()-1), request.getSize(), sort);
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+        log.info("Check page: {}", pageable.getPageNumber());
 
         if(     request.getName() == null &&
                 request.getPriceStart() == null &&
@@ -104,13 +108,13 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public SearchMenuResponse update(Menu menu) {
-        Menu updateMenu = entityById(menu.getId());
+    public SearchMenuResponse update(SearchMenuRequest request) {
+        Menu updateMenu = entityById(request.getId());
 
         return SearchMenuResponse.builder()
                 .id(updateMenu.getId())
                 .name(updateMenu.getName())
-                .price(updateMenu.getPrice().longValue())
+                .price(updateMenu.getPrice())
                 .build();
     }
 

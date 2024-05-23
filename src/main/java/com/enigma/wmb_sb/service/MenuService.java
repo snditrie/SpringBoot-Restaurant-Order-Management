@@ -6,11 +6,11 @@ import com.enigma.wmb_sb.model.entity.Menu;
 import org.springframework.data.domain.Page;
 
 public interface MenuService {
-    SearchMenuResponse create(Menu menu);
+    SearchMenuResponse create(SearchMenuRequest request);
     SearchMenuResponse getById(String id);
     Menu entityById(String id);
-    Page<Menu> getAll(SearchMenuRequest menu);
-    SearchMenuResponse update(Menu menu);
+    Page<Menu> getAll(SearchMenuRequest request);
+    SearchMenuResponse update(SearchMenuRequest request);
     void deleteById(String id);
     void updateMenuPrice(String id, Integer newPrice);
 }

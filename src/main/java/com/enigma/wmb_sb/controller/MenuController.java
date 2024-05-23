@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,8 +24,8 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<SearchMenuResponse>> addNewMenu(@RequestBody Menu menu){
-        SearchMenuResponse newMenu = menuService.create(menu);
+    public ResponseEntity<CommonResponse<SearchMenuResponse>> addNewMenu(@RequestBody SearchMenuRequest request){
+        SearchMenuResponse newMenu = menuService.create(request);
         CommonResponse<SearchMenuResponse> response = CommonResponse.<SearchMenuResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
@@ -47,21 +48,22 @@ public class MenuController {
     @GetMapping
     public ResponseEntity<CommonResponse<List<SearchMenuResponse>>> getAllMenu(
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "priceStart", required = false) Long priceStart,
-            @RequestParam(name = "priceEnd", required = false) Long priceEnd,
+            @RequestParam(name = "priceStart", required = false) Integer priceStart,
+            @RequestParam(name = "priceEnd", required = false) Integer priceEnd,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(name = "direction", defaultValue = "asc") String direction
     ){
+
         SearchMenuRequest request = SearchMenuRequest.builder()
-                .name(name)
-                .priceStart(priceStart)
-                .priceEnd(priceEnd)
                 .page(page)
                 .size(size)
                 .sortBy(sortBy)
                 .direction(direction)
+                .name(name)
+                .priceStart(priceStart)
+                .priceEnd(priceEnd)
                 .build();
         Page<Menu> allMenus = menuService.getAll(request);
 
@@ -69,13 +71,13 @@ public class MenuController {
                 .map(mn -> new SearchMenuResponse(
                         mn.getId(),
                         mn.getName(),
-                        mn.getPrice().longValue()
+                        mn.getPrice()
                 )).toList();
 
         PagingResponse pagingResponse = PagingResponse.builder()
                 .totalPages(allMenus.getTotalPages())
                 .totalElements(allMenus.getTotalElements())
-                .page(allMenus.getPageable().getPageNumber())
+                .page(allMenus.getPageable().getPageNumber() + 1)
                 .size(allMenus.getPageable().getPageSize())
                 .hasNext(allMenus.hasNext())
                 .hasPrevious(allMenus.hasPrevious())
@@ -91,8 +93,8 @@ public class MenuController {
     }
 
     @PutMapping
-    public ResponseEntity<CommonResponse<SearchMenuResponse>> updateMenu(@RequestBody Menu menu){
-        SearchMenuResponse updateMenu = menuService.update(menu);
+    public ResponseEntity<CommonResponse<SearchMenuResponse>> updateMenu(@RequestBody SearchMenuRequest request){
+        SearchMenuResponse updateMenu = menuService.update(request);
         CommonResponse<SearchMenuResponse> response = CommonResponse.<SearchMenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
