@@ -1,6 +1,8 @@
 package com.enigma.wmb_sb.repository;
 
 import com.enigma.wmb_sb.model.entity.Menu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +16,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface MenuRepository extends JpaRepository<Menu, String>, JpaSpecificationExecutor<Menu> {
-    List<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Long priceStart, Long priceEnd);
+    Page<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Long priceStart, Long priceEnd, Pageable pageable);
 
     @Modifying
     @Query(value = "UPDATE m_menu SET menu_price = :price WHERE id = :id", nativeQuery = true)

@@ -3,6 +3,7 @@ package com.enigma.wmb_sb.service.impl;
 import com.enigma.wmb_sb.model.dto.request.BillRequest;
 import com.enigma.wmb_sb.model.dto.response.BillDetailResponse;
 import com.enigma.wmb_sb.model.dto.response.BillResponse;
+import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
 import com.enigma.wmb_sb.model.enm.EnumTransactionType;
 import com.enigma.wmb_sb.model.entity.*;
 import com.enigma.wmb_sb.repository.BillRepository;
@@ -44,7 +45,7 @@ public class BillServiceImpl implements BillService {
 
         List<BillDetail> billDetails = request.getBillDetails().stream()
                 .map(detailRequest -> {
-                    Menu menu = menuService.getById(detailRequest.getMenuId());
+                    Menu menu = menuService.entityById(detailRequest.getMenuId());
                     return BillDetail.builder()
                             .menuId(menu)
                             .billId(bill)

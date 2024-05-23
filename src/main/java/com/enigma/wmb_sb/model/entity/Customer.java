@@ -4,11 +4,11 @@ import com.enigma.wmb_sb.constant.ConstantTable;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = ConstantTable.CUSTOMER)
 public class Customer {
     @Id
