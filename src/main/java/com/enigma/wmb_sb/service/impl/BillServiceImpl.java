@@ -111,22 +111,6 @@ public class BillServiceImpl implements BillService {
             }
         }
 
-//        return bills.stream()
-//                .map(trx -> {
-//                    List<BillDetailResponse> billDetailResponse = trx.getBillDetails().stream()
-//                            .map(detail -> BillDetailResponse.builder()
-//                                    .id(detail.getId())
-//                                    .menuId(detail.getMenuId().getId())
-//                                    .qty(detail.getQty())
-//                                    .build()).toList();
-//                    return BillResponse.builder()
-//                            .id(trx.getId())
-//                            .customerId(trx.getCustomerId().getId())
-//                            .transDate(trx.getTransDate())
-//                            .billDetails(billDetailResponse)
-//                            .build();
-//                }).toList();
-
     }
 
     @Override
