@@ -55,6 +55,7 @@ public class BillController {
                 .map(bl -> BillResponse.builder()
                         .id(bl.getId())
                         .customerName(bl.getCustomerId().getName())
+                        .tableRestoName(bl.getTableRestoId().getName())
                         .transTypeId(bl.getTransactionTypeId().getId().toString())
                         .transDate(bl.getTransDate())
                         .billDetails(bl.getBillDetails().stream()

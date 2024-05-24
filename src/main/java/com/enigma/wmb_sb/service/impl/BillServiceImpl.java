@@ -149,6 +149,9 @@ public class BillServiceImpl implements BillService {
 
         return BillResponse.builder()
                 .id(id)
+                .customerName(billFound.getCustomerId().getName())
+                .tableRestoName(billFound.getTableRestoId().getName())
+                .transTypeId(billFound.getTransactionTypeId().getId().toString())
                 .transDate(billFound.getTransDate())
                 .billDetails(billDetailResponse)
                 .totalAmount(totalAmount)
