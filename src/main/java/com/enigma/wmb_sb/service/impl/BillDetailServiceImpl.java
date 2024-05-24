@@ -1,10 +1,13 @@
 package com.enigma.wmb_sb.service.impl;
 
+import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.entity.BillDetail;
 import com.enigma.wmb_sb.repository.BillDetailRepository;
 import com.enigma.wmb_sb.service.BillDetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,5 +19,11 @@ public class BillDetailServiceImpl implements BillDetailService {
     @Override
     public List<BillDetail> createBulk(List<BillDetail> billDetails) {
         return billDetailRepository.saveAllAndFlush(billDetails);
+    }
+
+    @Override
+    public BillDetail getById(String id) {
+        return billDetailRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }

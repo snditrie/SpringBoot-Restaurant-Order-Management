@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface BillDetailService {
     List<BillDetail> createBulk (List<BillDetail> billDetails);
+    BillDetail getById (String id);
 }

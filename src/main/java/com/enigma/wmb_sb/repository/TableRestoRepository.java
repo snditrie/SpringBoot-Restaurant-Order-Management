@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TableRestoRepository extends JpaRepository<TableResto, String> {
+    Boolean existsByName (String name);
 }

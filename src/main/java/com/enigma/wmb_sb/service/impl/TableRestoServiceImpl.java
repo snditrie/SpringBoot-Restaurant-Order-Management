@@ -1,10 +1,13 @@
 package com.enigma.wmb_sb.service.impl;
 
+import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.entity.TableResto;
 import com.enigma.wmb_sb.repository.TableRestoRepository;
 import com.enigma.wmb_sb.service.TableRestoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,6 +18,9 @@ public class TableRestoServiceImpl implements TableRestoService {
 
     @Override
     public TableResto create(TableResto tableResto) {
+        if(tableRestoRepository.existsByName(tableResto.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
+        }
         return tableRestoRepository.saveAndFlush(tableResto);
     }
 
@@ -25,6 +31,10 @@ public class TableRestoServiceImpl implements TableRestoService {
 
     @Override
     public List<TableResto> getAll() {
+        if(tableRestoRepository.findAll().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+        }
+
         return tableRestoRepository.findAll();
     }
 
@@ -42,6 +52,6 @@ public class TableRestoServiceImpl implements TableRestoService {
 
     public TableResto findByIdOrThrowNotFound(String id){
         return tableRestoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("table not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 }

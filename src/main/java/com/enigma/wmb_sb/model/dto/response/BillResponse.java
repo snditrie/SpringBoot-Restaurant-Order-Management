@@ -1,6 +1,5 @@
 package com.enigma.wmb_sb.model.dto.response;
 
-import com.enigma.wmb_sb.model.entity.TransactionType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,9 +10,10 @@ import java.util.List;
 @Builder
 public class BillResponse {
     private String id;
-    private String customerId;
-    private String tableRestoId;
+    private String customerName;
+    private String tableRestoName;
     private String transTypeId;
     private Date transDate;
+    private Integer totalAmount;
     private List<BillDetailResponse> billDetails;
 }

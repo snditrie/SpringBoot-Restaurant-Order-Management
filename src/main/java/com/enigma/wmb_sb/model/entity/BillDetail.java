@@ -20,12 +20,13 @@ public class BillDetail {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "bill_id", nullable = false)
+    @JoinColumn(name = "bill_id")
     @JsonBackReference
     private Bill billId;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "menu_id")
+    @JsonBackReference
     private Menu menuId;
 
     @Column(name = "qty", nullable = false)
