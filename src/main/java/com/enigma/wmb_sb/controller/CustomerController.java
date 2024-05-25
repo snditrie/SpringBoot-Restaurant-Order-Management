@@ -2,13 +2,12 @@ package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
+import com.enigma.wmb_sb.model.dto.request.NewCustomerRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
-import com.enigma.wmb_sb.model.dto.response.SearchCustomerResponse;
-import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
+import com.enigma.wmb_sb.model.dto.response.CustomerResponse;
 import com.enigma.wmb_sb.model.entity.Customer;
-import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,9 +24,9 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<SearchCustomerResponse>> addNewMenu(@RequestBody SearchCustomerRequest customer){
-        SearchCustomerResponse newCustomer = customerService.create(customer);
-        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+    public ResponseEntity<CommonResponse<CustomerResponse>> addNewMenu(@RequestBody NewCustomerRequest request){
+        CustomerResponse newCustomer = customerService.create(request);
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_SAVE_DATA)
                 .data(newCustomer)
@@ -36,9 +35,9 @@ public class CustomerController {
     }
 
     @GetMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<SearchCustomerResponse>> getCustomerById(@PathVariable String id){
-        SearchCustomerResponse getCustomer = customerService.getById(id);
-        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+    public ResponseEntity<CommonResponse<CustomerResponse>> getCustomerById(@PathVariable String id){
+        CustomerResponse getCustomer = customerService.getById(id);
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
                 .data(getCustomer)
@@ -47,7 +46,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse<List<SearchCustomerResponse>>> getallCustomer(
+    public ResponseEntity<CommonResponse<List<CustomerResponse>>> getallCustomer(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "phoneNumber", required = false) String phone,
             @RequestParam(name = "isMember", required = false) Boolean member,
@@ -68,8 +67,8 @@ public class CustomerController {
                 .build();
         Page<Customer> allCustomer = customerService.getAll(request);
 
-        List<SearchCustomerResponse> customerResponses = allCustomer.getContent().stream()
-                .map(cs -> new SearchCustomerResponse(
+        List<CustomerResponse> customerResponses = allCustomer.getContent().stream()
+                .map(cs -> new CustomerResponse(
                         cs.getId(),
                         cs.getName(),
                         cs.getPhoneNumber(),
@@ -85,7 +84,7 @@ public class CustomerController {
                 .hasPrevious(allCustomer.hasPrevious())
                 .build();
 
-        CommonResponse<List<SearchCustomerResponse>> response = CommonResponse.<List<SearchCustomerResponse>>builder()
+        CommonResponse<List<CustomerResponse>> response = CommonResponse.<List<CustomerResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
                 .data(customerResponses)
@@ -95,10 +94,10 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
-    public ResponseEntity<CommonResponse<SearchCustomerResponse>> updateCustomer(@RequestBody SearchCustomerRequest request){
-        SearchCustomerResponse updateCustomer = customerService.update(request);
-        CommonResponse<SearchCustomerResponse> response = CommonResponse.<SearchCustomerResponse>builder()
+    @PutMapping(path = APIurl.PATH_VAR_ID)
+    public ResponseEntity<CommonResponse<CustomerResponse>> updateCustomer(@PathVariable String id, @RequestBody NewCustomerRequest request){
+        CustomerResponse updateCustomer = customerService.update(id, request);
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .data(updateCustomer)
@@ -116,18 +115,18 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<?>> updateMemberStatusById(
-            @PathVariable String id,
-            @RequestParam(name = "isMember") Boolean memberStatus
-    ){
-        customerService.updateStatusById(id, memberStatus);
-        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-                .build();
-        return ResponseEntity.ok(response);
-    }
+//    @PutMapping(path = APIurl.PATH_VAR_ID)
+//    public ResponseEntity<CommonResponse<?>> updateMemberStatusById(
+//            @PathVariable String id,
+//            @RequestParam(name = "isMember") Boolean memberStatus
+//    ){
+//        customerService.updateStatusById(id, memberStatus);
+//        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
+//                .statusCode(HttpStatus.OK.value())
+//                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+//                .build();
+//        return ResponseEntity.ok(response);
+//    }
 
 
 

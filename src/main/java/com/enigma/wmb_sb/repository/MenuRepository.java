@@ -19,7 +19,7 @@ public interface MenuRepository extends JpaRepository<Menu, String>, JpaSpecific
     Page<Menu> findAllByNameContainingIgnoreCaseAndPriceBetween(String name, Integer priceStart, Integer priceEnd, Pageable pageable);
     Boolean existsByName(String name);
 
-    @Modifying
-    @Query(value = "UPDATE m_menu SET menu_price = :price WHERE id = :id", nativeQuery = true)
-    void updatePrice(@Param("id") String id, @Param("price") Integer newPrice);
+//    @Modifying
+//    @Query(value = "UPDATE m_menu SET menu_price = :price WHERE id = :id", nativeQuery = true)
+//    void updatePrice(@Param("id") String id, @Param("price") Integer newPrice);
 }

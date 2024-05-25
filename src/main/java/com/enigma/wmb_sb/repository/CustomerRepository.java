@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CustomerRepository extends JpaRepository<Customer, String>, JpaSpecificationExecutor<Customer> {
     Boolean existsByPhoneNumber (String phoneNumber);
 
-    @Modifying
-    @Query(value = "UPDATE m_customer SET member_status = :isMember WHERE id = :id", nativeQuery = true)
-    void updateStatus(@Param("id") String id, @Param("isMember") Boolean memberStatus);
+//    @Modifying
+//    @Query(value = "UPDATE m_customer SET member_status = :isMember WHERE id = :id", nativeQuery = true)
+//    void updateStatus(@Param("id") String id, @Param("isMember") Boolean memberStatus);
 }

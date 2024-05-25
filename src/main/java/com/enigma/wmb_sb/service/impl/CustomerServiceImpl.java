@@ -3,7 +3,7 @@ package com.enigma.wmb_sb.service.impl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.NewCustomerRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
-import com.enigma.wmb_sb.model.dto.response.SearchCustomerResponse;
+import com.enigma.wmb_sb.model.dto.response.CustomerResponse;
 import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.repository.CustomerRepository;
 import com.enigma.wmb_sb.service.CustomerService;
@@ -19,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
@@ -28,7 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ValidationUtil validationUtil;
 
     @Override
-    public SearchCustomerResponse create(NewCustomerRequest request) {
+    public CustomerResponse create(NewCustomerRequest request) {
         validationUtil.validate(request);
 
         if(customerRepository.existsByPhoneNumber(request.getPhone())){
@@ -40,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .phoneNumber(request.getPhone())
                 .isMember(request.getMemberStatus())
                 .build();
-        return SearchCustomerResponse.builder()
+        return CustomerResponse.builder()
                 .id(newCustomer.getId())
                 .name(newCustomer.getName())
                 .mobilePhone(newCustomer.getPhoneNumber())
@@ -54,10 +52,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public SearchCustomerResponse getById(String id) {
+    public CustomerResponse getById(String id) {
         Customer customerFound = customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-        return SearchCustomerResponse.builder()
+        return CustomerResponse.builder()
                 .id(customerFound.getId())
                 .name(customerFound.getName())
                 .mobilePhone(customerFound.getPhoneNumber())
@@ -97,16 +95,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public SearchCustomerResponse update(SearchCustomerRequest request) {
-        Customer updateCustomer = entityById(request.getId());
+    public CustomerResponse update(String id, NewCustomerRequest request) {
+        validationUtil.validate(request);
+        Customer updateCustomer = entityById(id);
 
-        String newName = request.getName();
-        if (newName != null) {
-            updateCustomer.setName(newName);
+//        String newName = request.getName();
+        if (request.getName() != null) {
+            updateCustomer.setName(request.getName());
+        }
+
+        if(request.getPhone() != null) {
+            updateCustomer.setPhoneNumber(request.getPhone());
+        }
+
+        if(request.getMemberStatus() != null) {
+            updateCustomer.setIsMember(request.getMemberStatus());
         }
 
         customerRepository.saveAndFlush(updateCustomer);
-        return SearchCustomerResponse.builder()
+        return CustomerResponse.builder()
                 .id(updateCustomer.getId())
                 .name(updateCustomer.getName())
                 .mobilePhone(updateCustomer.getPhoneNumber())
@@ -120,11 +127,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customerToDelete);
     }
 
-    @Override
-    public void updateStatusById(String id, Boolean status) {
-        findByIdOrThrowNotFound(id);
-        customerRepository.updateStatus(id, status);
-    }
+//    @Override
+//    public void updateStatusById(String id, Boolean status) {
+//        findByIdOrThrowNotFound(id);
+//        customerRepository.updateStatus(id, status);
+//    }
 
     public Customer findByIdOrThrowNotFound(String id){
         return customerRepository.findById(id)

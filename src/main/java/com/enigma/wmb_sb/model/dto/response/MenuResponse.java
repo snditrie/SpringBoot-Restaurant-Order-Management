@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchCustomerResponse {
+public class MenuResponse {
     private String id;
     private String name;
-    private String mobilePhone;
-    private Boolean isMember;
+    private Integer price;
 }

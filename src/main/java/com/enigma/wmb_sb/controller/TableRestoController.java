@@ -3,7 +3,6 @@ package com.enigma.wmb_sb.controller;
 import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
-import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
 import com.enigma.wmb_sb.model.entity.TableResto;
 import com.enigma.wmb_sb.service.TableRestoService;
 import lombok.RequiredArgsConstructor;

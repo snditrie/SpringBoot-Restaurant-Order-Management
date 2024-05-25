@@ -2,7 +2,7 @@ package com.enigma.wmb_sb.service.impl;
 
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
-import com.enigma.wmb_sb.model.dto.response.SearchMenuResponse;
+import com.enigma.wmb_sb.model.dto.response.MenuResponse;
 import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.repository.MenuRepository;
 import com.enigma.wmb_sb.service.MenuService;
@@ -18,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,7 +25,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
 
     @Override
-    public SearchMenuResponse create(SearchMenuRequest request) {
+    public MenuResponse create(SearchMenuRequest request) {
         if(menuRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
         }
@@ -38,7 +36,7 @@ public class MenuServiceImpl implements MenuService {
                 .build();
         menuRepository.saveAndFlush(newMenu);
 
-        return SearchMenuResponse.builder()
+        return MenuResponse.builder()
                 .id(newMenu.getId())
                 .name(newMenu.getName())
                 .price(newMenu.getPrice())
@@ -51,10 +49,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public SearchMenuResponse getById(String id) {
+    public MenuResponse getById(String id) {
         Menu menuFound = menuRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-        return SearchMenuResponse.builder()
+        return MenuResponse.builder()
                 .id(menuFound.getId())
                 .name(menuFound.getName())
                 .price(menuFound.getPrice())
@@ -108,10 +106,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public SearchMenuResponse update(SearchMenuRequest request) {
+    public MenuResponse update(SearchMenuRequest request) {
         Menu updateMenu = entityById(request.getId());
 
-        return SearchMenuResponse.builder()
+        return MenuResponse.builder()
                 .id(updateMenu.getId())
                 .name(updateMenu.getName())
                 .price(updateMenu.getPrice())
@@ -124,11 +122,11 @@ public class MenuServiceImpl implements MenuService {
         menuRepository.delete(menuToDelete);
     }
 
-    @Override
-    public void updateMenuPrice(String id, Integer newPrice) {
-        findByIdOrThrowNotFound(id);
-        menuRepository.updatePrice(id, newPrice);
-    }
+//    @Override
+//    public void updateMenuPrice(String id, Integer newPrice) {
+//        findByIdOrThrowNotFound(id);
+//        menuRepository.updatePrice(id, newPrice);
+//    }
 
     public Menu findByIdOrThrowNotFound(String id){
         return menuRepository.findById(id)
