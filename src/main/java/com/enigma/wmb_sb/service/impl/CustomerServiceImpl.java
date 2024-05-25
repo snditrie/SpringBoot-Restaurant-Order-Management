@@ -1,12 +1,14 @@
 package com.enigma.wmb_sb.service.impl;
 
 import com.enigma.wmb_sb.constant.ResponseMessage;
+import com.enigma.wmb_sb.model.dto.request.NewCustomerRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.dto.response.SearchCustomerResponse;
 import com.enigma.wmb_sb.model.entity.Customer;
 import com.enigma.wmb_sb.repository.CustomerRepository;
 import com.enigma.wmb_sb.service.CustomerService;
 import com.enigma.wmb_sb.specification.CustomerSpecification;
+import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,9 +25,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final ValidationUtil validationUtil;
 
     @Override
-    public SearchCustomerResponse create(SearchCustomerRequest request) {
+    public SearchCustomerResponse create(NewCustomerRequest request) {
+        validationUtil.validate(request);
+
         if(customerRepository.existsByPhoneNumber(request.getPhone())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
         }
