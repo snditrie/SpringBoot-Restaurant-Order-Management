@@ -25,7 +25,7 @@ public class BillController {
     private final BillService billService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<BillResponse>> createNewBill(@RequestBody BillRequest request){
+    public ResponseEntity<CommonResponse<BillResponse>> addNewBill(@RequestBody BillRequest request){
         BillResponse newBill = billService.create(request);
         CommonResponse<BillResponse> response = CommonResponse.<BillResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())

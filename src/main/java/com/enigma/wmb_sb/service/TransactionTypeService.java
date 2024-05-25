@@ -11,5 +11,4 @@ public interface TransactionTypeService {
     TransactionType getById(EnumTransactionType id);
     List<TransactionType> getAll();
     TransactionType update(TransactionType transactionType);
-    void deleteById(EnumTransactionType id);
 }
