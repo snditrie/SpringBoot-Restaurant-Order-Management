@@ -2,6 +2,7 @@ package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
+import com.enigma.wmb_sb.model.dto.request.NewMenuRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
@@ -23,7 +24,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<MenuResponse>> addNewMenu(@RequestBody SearchMenuRequest request){
+    public ResponseEntity<CommonResponse<MenuResponse>> addNewMenu(@RequestBody NewMenuRequest request){
         MenuResponse newMenu = menuService.create(request);
         CommonResponse<MenuResponse> response = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -91,9 +92,9 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
-    public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(@RequestBody SearchMenuRequest request){
-        MenuResponse updateMenu = menuService.update(request);
+    @PutMapping(path = APIurl.PATH_VAR_ID)
+    public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(@PathVariable String id, @RequestBody NewMenuRequest request){
+        MenuResponse updateMenu = menuService.update(id, request);
         CommonResponse<MenuResponse> response = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
@@ -112,16 +113,4 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
-//    @PutMapping(path = APIurl.PATH_VAR_ID)
-//    public ResponseEntity<CommonResponse<?>> updateMenuPriceById(
-//            @PathVariable String id,
-//            @RequestParam(name = "newPrice") Integer newPrice
-//    ){
-//        menuService.updateMenuPrice(id, newPrice);
-//        CommonResponse<Menu> response = CommonResponse.<Menu>builder()
-//                .statusCode(HttpStatus.OK.value())
-//                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-//                .build();
-//        return ResponseEntity.ok(response);
-//    }
 }

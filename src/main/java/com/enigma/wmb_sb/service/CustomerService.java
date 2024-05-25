@@ -13,5 +13,4 @@ public interface CustomerService {
     Page<Customer> getAll(SearchCustomerRequest request);
     CustomerResponse update(String id, NewCustomerRequest request);
     void deleteById(String id);
-//    void updateStatusById(String id, Boolean status);
 }

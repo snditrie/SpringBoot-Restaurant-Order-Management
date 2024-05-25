@@ -10,6 +10,7 @@ import com.enigma.wmb_sb.model.entity.*;
 import com.enigma.wmb_sb.repository.BillRepository;
 import com.enigma.wmb_sb.service.*;
 import com.enigma.wmb_sb.specification.BillSpecification;
+import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,10 +36,13 @@ public class BillServiceImpl implements BillService {
     private final MenuService menuService;
     private final TransactionTypeService transactionTypeService;
     private final TableRestoService tableRestoService;
+    private final ValidationUtil validationUtil;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BillResponse create(BillRequest request) {
+        validationUtil.validate(request);
+        validationUtil.validateTableRestoId(request);
         Customer customer = customerService.entityById(request.getCustomerId());
         TransactionType transactionType = transactionTypeService.getById(EnumTransactionType.valueOf(request.getTransTypeId()));
         TableResto tableResto = tableRestoService.getById(request.getTableRestoId());

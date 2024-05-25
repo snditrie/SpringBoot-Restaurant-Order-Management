@@ -99,8 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
         validationUtil.validate(request);
         Customer updateCustomer = entityById(id);
 
-//        String newName = request.getName();
-        if (request.getName() != null) {
+        if(request.getName() != null) {
             updateCustomer.setName(request.getName());
         }
 
@@ -126,12 +125,6 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customerToDelete = findByIdOrThrowNotFound(id);
         customerRepository.delete(customerToDelete);
     }
-
-//    @Override
-//    public void updateStatusById(String id, Boolean status) {
-//        findByIdOrThrowNotFound(id);
-//        customerRepository.updateStatus(id, status);
-//    }
 
     public Customer findByIdOrThrowNotFound(String id){
         return customerRepository.findById(id)

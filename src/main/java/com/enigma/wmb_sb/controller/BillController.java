@@ -10,6 +10,7 @@ import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
 import com.enigma.wmb_sb.model.entity.Bill;
 import com.enigma.wmb_sb.service.BillService;
+import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,11 @@ import java.util.List;
 @RequestMapping(path = APIurl.BILL_API)
 public class BillController {
     private final BillService billService;
+//    private final ValidationUtil validationUtil;
 
     @PostMapping
     public ResponseEntity<CommonResponse<BillResponse>> addNewBill(@RequestBody BillRequest request){
+//        validationUtil.validate(request);
         BillResponse newBill = billService.create(request);
         CommonResponse<BillResponse> response = CommonResponse.<BillResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
