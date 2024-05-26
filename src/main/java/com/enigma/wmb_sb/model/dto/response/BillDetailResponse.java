@@ -10,5 +10,5 @@ public class BillDetailResponse {
     private String menuName;
     private Integer qty;
     private Integer price;
-    private Integer totalAmount;
+    private Integer subTotal;
 }

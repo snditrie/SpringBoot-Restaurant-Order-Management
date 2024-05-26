@@ -10,7 +10,6 @@ import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
 import com.enigma.wmb_sb.model.entity.Bill;
 import com.enigma.wmb_sb.service.BillService;
-import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,11 +23,9 @@ import java.util.List;
 @RequestMapping(path = APIurl.BILL_API)
 public class BillController {
     private final BillService billService;
-//    private final ValidationUtil validationUtil;
 
     @PostMapping
     public ResponseEntity<CommonResponse<BillResponse>> addNewBill(@RequestBody BillRequest request){
-//        validationUtil.validate(request);
         BillResponse newBill = billService.create(request);
         CommonResponse<BillResponse> response = CommonResponse.<BillResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -58,7 +55,7 @@ public class BillController {
                 .map(bl -> BillResponse.builder()
                         .id(bl.getId())
                         .customerName(bl.getCustomerId().getName())
-                        .tableRestoName(bl.getTableRestoId().getName())
+                        .tableRestoName(bl.getTableRestoId() != null ? bl.getTableRestoId().getName() : null)
                         .transTypeId(bl.getTransactionTypeId().getId().toString())
                         .transDate(bl.getTransDate())
                         .billDetails(bl.getBillDetails().stream()
@@ -67,7 +64,7 @@ public class BillController {
                                         .menuName(detail.getMenuId().getName())
                                         .qty(detail.getQty())
                                         .price(detail.getMenuId().getPrice())
-                                        .totalAmount(detail.getMenuId().getPrice() * detail.getQty())
+                                        .subTotal(detail.getMenuId().getPrice() * detail.getQty())
                                         .build()).toList())
                         .totalAmount(bl.getBillDetails().stream()
                                 .mapToInt(dt -> dt.getMenuId().getPrice() * dt.getQty()).sum())

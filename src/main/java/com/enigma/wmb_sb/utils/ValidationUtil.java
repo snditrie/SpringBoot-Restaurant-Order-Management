@@ -1,8 +1,6 @@
 package com.enigma.wmb_sb.utils;
 
-import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.BillRequest;
-import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -27,8 +25,13 @@ public class ValidationUtil {
 
     public void validateTableRestoId(BillRequest request) {
         if("DI".equalsIgnoreCase(request.getTransTypeId())) {
-            if(request.getTableRestoId() == null || request.getTableRestoId().isEmpty()) {
+            if(request.getTableRestoId() == null || request.getTableRestoId().trim().isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "tableRestoId is required for dine-in transactions");
+            }
+        } else
+        if ("TA".equalsIgnoreCase(request.getTransTypeId())) {
+            if (request.getTableRestoId() != null && !request.getTableRestoId().trim().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "tableRestoId must be null or empty for take-away transactions");
             }
         }
     }

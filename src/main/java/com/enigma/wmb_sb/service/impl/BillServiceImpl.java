@@ -45,7 +45,11 @@ public class BillServiceImpl implements BillService {
         validationUtil.validateTableRestoId(request);
         Customer customer = customerService.entityById(request.getCustomerId());
         TransactionType transactionType = transactionTypeService.getById(EnumTransactionType.valueOf(request.getTransTypeId()));
-        TableResto tableResto = tableRestoService.getById(request.getTableRestoId());
+
+        TableResto tableResto = null;
+        if (request.getTableRestoId() != null) {
+            tableResto = tableRestoService.getById(request.getTableRestoId());
+        }
 
         Bill bill = Bill.builder()
                 .customerId(customer)
@@ -75,13 +79,13 @@ public class BillServiceImpl implements BillService {
                         .menuName(detail.getMenuId().getName())
                         .qty(detail.getQty())
                         .price(detail.getMenuId().getPrice())
-                        .totalAmount(detail.getMenuId().getPrice() * detail.getQty())
+                        .subTotal(detail.getMenuId().getPrice() * detail.getQty())
                         .build()).toList();
         return BillResponse.builder()
                 .id(bill.getId())
                 .customerName(bill.getCustomerId().getName())
                 .transTypeId(bill.getTransactionTypeId().getId().toString())
-                .tableRestoName(bill.getTableRestoId().getName())
+                .tableRestoName(bill.getTableRestoId() != null ? bill.getTableRestoId().getName() : null)
                 .transDate(bill.getTransDate())
                 .billDetails(billDetailResponse)
                 .totalAmount(billDetails.stream().mapToInt(detail -> detail.getMenuId().getPrice() * detail.getQty()).sum())
@@ -94,7 +98,7 @@ public class BillServiceImpl implements BillService {
             request.setPage(1);
         }
         String validSortBy;
-        if("transDate".equalsIgnoreCase(request.getSortBy()) || "amount".equalsIgnoreCase(request.getSortBy())) {
+        if("transDate".equalsIgnoreCase(request.getSortBy()) || "totalAmount".equalsIgnoreCase(request.getSortBy())) {
             validSortBy = request.getSortBy();
         } else {
             validSortBy = "transDate";
@@ -128,7 +132,7 @@ public class BillServiceImpl implements BillService {
                         .menuName(detail.getMenuId().getName())
                         .qty(detail.getQty())
                         .price(detail.getMenuId().getPrice())
-                        .totalAmount(detail.getMenuId().getPrice() * detail.getQty())
+                        .subTotal(detail.getMenuId().getPrice() * detail.getQty())
                         .build()).toList();
 
         int totalAmount = billFound.getBillDetails().stream()
@@ -138,7 +142,7 @@ public class BillServiceImpl implements BillService {
         return BillResponse.builder()
                 .id(id)
                 .customerName(billFound.getCustomerId().getName())
-                .tableRestoName(billFound.getTableRestoId().getName())
+                .tableRestoName(billFound.getTableRestoId() != null ? billFound.getTableRestoId().getName() : null)
                 .transTypeId(billFound.getTransactionTypeId().getId().toString())
                 .transDate(billFound.getTransDate())
                 .billDetails(billDetailResponse)

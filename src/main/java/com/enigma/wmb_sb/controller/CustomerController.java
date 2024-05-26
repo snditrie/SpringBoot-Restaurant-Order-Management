@@ -115,19 +115,4 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-//    @PutMapping(path = APIurl.PATH_VAR_ID)
-//    public ResponseEntity<CommonResponse<?>> updateMemberStatusById(
-//            @PathVariable String id,
-//            @RequestParam(name = "isMember") Boolean memberStatus
-//    ){
-//        customerService.updateStatusById(id, memberStatus);
-//        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
-//                .statusCode(HttpStatus.OK.value())
-//                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-//                .build();
-//        return ResponseEntity.ok(response);
-//    }
-
-
-
 }
