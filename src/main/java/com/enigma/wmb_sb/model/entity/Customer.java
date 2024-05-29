@@ -4,7 +4,8 @@ import com.enigma.wmb_sb.constant.ConstantTable;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,4 +24,9 @@ public class Customer {
 
     @Column(name = "member_status")
     private Boolean isMember;
+
+    @OneToOne
+    @JoinColumn(name = "user_account_id", unique = true)
+    private UserAccount userAccount;
+
 }

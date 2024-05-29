@@ -1,7 +1,7 @@
 package com.enigma.wmb_sb.service.impl;
 
 import com.enigma.wmb_sb.constant.ResponseMessage;
-import com.enigma.wmb_sb.model.enm.EnumTransactionType;
+import com.enigma.wmb_sb.constant.EnumTransactionType;
 import com.enigma.wmb_sb.model.entity.TransactionType;
 import com.enigma.wmb_sb.repository.TransactionTypeRepository;
 import com.enigma.wmb_sb.service.TransactionTypeService;

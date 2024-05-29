@@ -5,7 +5,7 @@ import com.enigma.wmb_sb.model.dto.request.BillRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchBillRequest;
 import com.enigma.wmb_sb.model.dto.response.BillDetailResponse;
 import com.enigma.wmb_sb.model.dto.response.BillResponse;
-import com.enigma.wmb_sb.model.enm.EnumTransactionType;
+import com.enigma.wmb_sb.constant.EnumTransactionType;
 import com.enigma.wmb_sb.model.entity.*;
 import com.enigma.wmb_sb.repository.BillRepository;
 import com.enigma.wmb_sb.service.*;
@@ -26,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillServiceImpl implements BillService {
@@ -58,7 +57,6 @@ public class BillServiceImpl implements BillService {
                 .transDate(new Date())
                 .build();
         billRepository.saveAndFlush(bill);
-        log.info("Check detail dari billDetail: {}", bill.getCustomerId());
 
         List<BillDetail> billDetails = request.getBillDetails().stream()
                 .map(detailRequest -> {

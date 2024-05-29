@@ -3,7 +3,7 @@ package com.enigma.wmb_sb.controller;
 import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
-import com.enigma.wmb_sb.model.enm.EnumTransactionType;
+import com.enigma.wmb_sb.constant.EnumTransactionType;
 import com.enigma.wmb_sb.model.entity.TransactionType;
 import com.enigma.wmb_sb.service.TransactionTypeService;
 import lombok.RequiredArgsConstructor;

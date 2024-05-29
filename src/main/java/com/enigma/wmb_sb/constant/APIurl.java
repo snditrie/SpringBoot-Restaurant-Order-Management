@@ -7,4 +7,5 @@ public class APIurl {
     public static final String TRANS_TYPE_API = "/api/v1/trans-types";
     public static final String TABLE_API = "/api/v1/tables";
     public static final String BILL_API = "/api/v1/bills";
+    public static final String AUTH_API = "/api/v1/auth";
 }

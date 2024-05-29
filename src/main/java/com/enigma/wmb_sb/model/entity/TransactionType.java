@@ -1,11 +1,14 @@
 package com.enigma.wmb_sb.model.entity;
 
 import com.enigma.wmb_sb.constant.ConstantTable;
-import com.enigma.wmb_sb.model.enm.EnumTransactionType;
+import com.enigma.wmb_sb.constant.EnumTransactionType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = ConstantTable.TRANS_TYPE)
 public class TransactionType {
