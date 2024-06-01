@@ -2,7 +2,7 @@ package com.enigma.wmb_sb.controller;
 
 import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
-import com.enigma.wmb_sb.model.dto.request.NewCustomerRequest;
+import com.enigma.wmb_sb.model.dto.request.UpdateCustomerRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,17 +24,7 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<CommonResponse<CustomerResponse>> addNewMenu(@RequestBody NewCustomerRequest request){
-        CustomerResponse newCustomer = customerService.create(request);
-        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message(ResponseMessage.SUCCESS_SAVE_DATA)
-                .data(newCustomer)
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping(path = APIurl.PATH_VAR_ID)
     public ResponseEntity<CommonResponse<CustomerResponse>> getCustomerById(@PathVariable String id){
         CustomerResponse getCustomer = customerService.getById(id);
@@ -45,6 +36,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping
     public ResponseEntity<CommonResponse<List<CustomerResponse>>> getallCustomer(
             @RequestParam(name = "name", required = false) String name,
@@ -72,7 +64,8 @@ public class CustomerController {
                         cs.getId(),
                         cs.getName(),
                         cs.getPhoneNumber(),
-                        cs.getIsMember()
+                        cs.getIsMember(),
+                        cs.getUserAccount().getUsername()
                 )).toList();
 
         PagingResponse pagingResponse = PagingResponse.builder()
@@ -94,9 +87,9 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<CustomerResponse>> updateCustomer(@PathVariable String id, @RequestBody NewCustomerRequest request){
-        CustomerResponse updateCustomer = customerService.update(id, request);
+    @PutMapping
+    public ResponseEntity<CommonResponse<CustomerResponse>> updateCustomer(@RequestBody UpdateCustomerRequest request){
+        CustomerResponse updateCustomer = customerService.update(request);
         CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)

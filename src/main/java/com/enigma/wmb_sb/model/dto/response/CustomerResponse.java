@@ -13,6 +13,6 @@ public class CustomerResponse {
     private String id;
     private String name;
     private String mobilePhone;
-    private Boolean isMember;
+    private Boolean memberStatus;
     private String userAccountId;
 }

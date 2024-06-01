@@ -1,12 +1,14 @@
 package com.enigma.wmb_sb.service.impl;
 
 import com.enigma.wmb_sb.constant.ResponseMessage;
-import com.enigma.wmb_sb.model.dto.request.NewCustomerRequest;
+import com.enigma.wmb_sb.model.dto.request.UpdateCustomerRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchCustomerRequest;
 import com.enigma.wmb_sb.model.dto.response.CustomerResponse;
 import com.enigma.wmb_sb.model.entity.Customer;
+import com.enigma.wmb_sb.model.entity.UserAccount;
 import com.enigma.wmb_sb.repository.CustomerRepository;
 import com.enigma.wmb_sb.service.CustomerService;
+import com.enigma.wmb_sb.service.UserService;
 import com.enigma.wmb_sb.specification.CustomerSpecification;
 import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,25 +26,22 @@ import org.springframework.web.server.ResponseStatusException;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ValidationUtil validationUtil;
+    private final UserService userService;
 
     @Override
-    public CustomerResponse create(NewCustomerRequest request) {
-        validationUtil.validate(request);
+    public CustomerResponse create(Customer customer) {
+        validationUtil.validate(customer);
 
-        if(customerRepository.existsByPhoneNumber(request.getPhone())){
+        if(customerRepository.existsByUserAccount(customer.getUserAccount())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ResponseMessage.ERROR_ALREADY_EXIST);
         }
 
-        Customer newCustomer = Customer.builder()
-                .name(request.getName())
-                .phoneNumber(request.getPhone())
-                .isMember(request.getMemberStatus())
-                .build();
+        Customer savedCustomer = customerRepository.saveAndFlush(customer);
         return CustomerResponse.builder()
-                .id(newCustomer.getId())
-                .name(newCustomer.getName())
-                .mobilePhone(newCustomer.getPhoneNumber())
-                .isMember(newCustomer.getIsMember())
+                .id(savedCustomer.getId())
+                .name(savedCustomer.getName())
+                .mobilePhone(savedCustomer.getPhoneNumber())
+                .memberStatus(savedCustomer.getIsMember())
                 .build();
     }
 
@@ -55,12 +54,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse getById(String id) {
         Customer customerFound = customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-        return CustomerResponse.builder()
-                .id(customerFound.getId())
-                .name(customerFound.getName())
-                .mobilePhone(customerFound.getPhoneNumber())
-                .isMember(customerFound.getIsMember())
-                .build();
+        return parseCustomerToCustomerResponse(customerFound);
     }
 
     @Override
@@ -95,29 +89,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse update(String id, NewCustomerRequest request) {
+    public CustomerResponse update(UpdateCustomerRequest request) {
         validationUtil.validate(request);
-        Customer updateCustomer = entityById(id);
+        Customer customerToUpdate = entityById(request.getId());
 
-        if(request.getName() != null) {
-            updateCustomer.setName(request.getName());
+        UserAccount userAccount = userService.getByContext();
+
+        if(!userAccount.getId().equals(customerToUpdate.getUserAccount().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         }
 
-        if(request.getPhone() != null) {
-            updateCustomer.setPhoneNumber(request.getPhone());
-        }
-
-        if(request.getMemberStatus() != null) {
-            updateCustomer.setIsMember(request.getMemberStatus());
-        }
-
-        customerRepository.saveAndFlush(updateCustomer);
-        return CustomerResponse.builder()
-                .id(updateCustomer.getId())
-                .name(updateCustomer.getName())
-                .mobilePhone(updateCustomer.getPhoneNumber())
-                .isMember(updateCustomer.getIsMember())
-                .build();
+        customerToUpdate.setName(request.getName());
+        customerToUpdate.setPhoneNumber(request.getMobilePhone());
+        customerToUpdate.setIsMember(request.getMemberStatus());
+        customerRepository.saveAndFlush(customerToUpdate);
+        return parseCustomerToCustomerResponse(customerToUpdate);
     }
 
     @Override
@@ -130,4 +116,22 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
+
+    private CustomerResponse parseCustomerToCustomerResponse(Customer customer){
+
+        String userId;
+        if(customer.getUserAccount() == null){
+            userId = null;
+        } else {
+            userId = customer.getUserAccount().getId();
+        }
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .name(customer.getName())
+                .mobilePhone(customer.getPhoneNumber())
+                .memberStatus(customer.getIsMember())
+                .userAccountId(userId)
+                .build();
+    }
+
 }

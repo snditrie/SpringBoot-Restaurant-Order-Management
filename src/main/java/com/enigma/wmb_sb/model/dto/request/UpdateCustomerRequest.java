@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewCustomerRequest {
+public class UpdateCustomerRequest {
+    private String id;
     private String name;
     @Pattern(regexp = "^08\\d{9,11}$", message = ResponseMessage.ERROR_PHONE_NUMBER)
-    private String phone;
+    private String mobilePhone;
     private Boolean memberStatus;
 }
