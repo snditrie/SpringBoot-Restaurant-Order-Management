@@ -4,6 +4,7 @@ import com.enigma.wmb_sb.constant.APIurl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.NewMenuRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
+import com.enigma.wmb_sb.model.dto.request.UpdateMenuRequest;
 import com.enigma.wmb_sb.model.dto.response.CommonResponse;
 import com.enigma.wmb_sb.model.dto.response.PagingResponse;
 import com.enigma.wmb_sb.model.dto.response.MenuResponse;
@@ -93,22 +94,12 @@ public class MenuController {
     }
 
     @PutMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(@PathVariable String id, @RequestBody NewMenuRequest request){
-        MenuResponse updateMenu = menuService.update(id, request);
+    public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(@RequestBody UpdateMenuRequest request){
+        MenuResponse updateMenu = menuService.update(request);
         CommonResponse<MenuResponse> response = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .data(updateMenu)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<?>> deleteMenuById(@PathVariable String id){
-        menuService.deleteById(id);
-        CommonResponse<Menu> response = CommonResponse.<Menu>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
         return ResponseEntity.ok(response);
     }

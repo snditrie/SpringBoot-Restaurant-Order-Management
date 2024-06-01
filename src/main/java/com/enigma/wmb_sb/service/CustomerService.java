@@ -12,5 +12,4 @@ public interface CustomerService {
     Customer entityById(String id);
     Page<Customer> getAll(SearchCustomerRequest request);
     CustomerResponse update(UpdateCustomerRequest request);
-    void deleteById(String id);
 }

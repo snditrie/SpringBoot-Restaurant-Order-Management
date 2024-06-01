@@ -9,5 +9,4 @@ public interface TableRestoService {
     TableResto getById(String id);
     List<TableResto> getAll();
     TableResto update(TableResto tableResto);
-    void deleteById(String id);
 }

@@ -42,6 +42,7 @@ public class BillServiceImpl implements BillService {
     public BillResponse create(BillRequest request) {
         validationUtil.validate(request);
         validationUtil.validateTableRestoId(request);
+
         Customer customer = customerService.entityById(request.getCustomerId());
         TransactionType transactionType = transactionTypeService.getById(EnumTransactionType.valueOf(request.getTransTypeId()));
 
@@ -90,6 +91,7 @@ public class BillServiceImpl implements BillService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Bill> getAll(SearchBillRequest request) {
         if(request.getPage() <= 0) {
@@ -119,6 +121,7 @@ public class BillServiceImpl implements BillService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BillResponse getById(String id) {
         Bill billFound = billRepository.findById(id)

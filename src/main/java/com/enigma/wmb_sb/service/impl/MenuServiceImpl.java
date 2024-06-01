@@ -3,6 +3,7 @@ package com.enigma.wmb_sb.service.impl;
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import com.enigma.wmb_sb.model.dto.request.NewMenuRequest;
 import com.enigma.wmb_sb.model.dto.request.SearchMenuRequest;
+import com.enigma.wmb_sb.model.dto.request.UpdateMenuRequest;
 import com.enigma.wmb_sb.model.dto.response.MenuResponse;
 import com.enigma.wmb_sb.model.entity.Menu;
 import com.enigma.wmb_sb.repository.MenuRepository;
@@ -10,7 +11,6 @@ import com.enigma.wmb_sb.service.MenuService;
 import com.enigma.wmb_sb.specification.MenuSpecification;
 import com.enigma.wmb_sb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +18,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final ValidationUtil validationUtil;
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public MenuResponse create(NewMenuRequest request) {
         validationUtil.validate(request);
@@ -41,35 +42,29 @@ public class MenuServiceImpl implements MenuService {
                 .build();
         menuRepository.saveAndFlush(newMenu);
 
-        return MenuResponse.builder()
-                .id(newMenu.getId())
-                .name(newMenu.getName())
-                .price(newMenu.getPrice())
-                .build();
+        return parseMenuToMenuResponse(newMenu);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Menu entityById(String id) {
         return findByIdOrThrowNotFound(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public MenuResponse getById(String id) {
         Menu menuFound = menuRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
-        return MenuResponse.builder()
-                .id(menuFound.getId())
-                .name(menuFound.getName())
-                .price(menuFound.getPrice())
-                .build();
+        return parseMenuToMenuResponse(menuFound);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Menu> getAll(SearchMenuRequest request) {
         if(request.getPage() <= 0) {
             request.setPage(1);
         }
-        log.info("Check page: {}", request.getPage());
 
         String validSortBy;
         if("name".equalsIgnoreCase(request.getSortBy()) || "price".equalsIgnoreCase(request.getSortBy())) {
@@ -79,7 +74,6 @@ public class MenuServiceImpl implements MenuService {
         }
         Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), validSortBy);
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
-        log.info("Check page: {}", pageable.getPageNumber());
 
         if(     request.getName() == null &&
                 request.getPriceStart() == null &&
@@ -110,10 +104,12 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public MenuResponse update(String id, NewMenuRequest request) {
+    public MenuResponse update(UpdateMenuRequest request) {
         validationUtil.validate(request);
-        Menu updateMenu = entityById(id);
+
+        Menu updateMenu = entityById(request.getId());
 
         if(request.getName() != null) {
             updateMenu.setName(request.getName());
@@ -124,21 +120,20 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menuRepository.saveAndFlush(updateMenu);
-        return MenuResponse.builder()
-                .id(updateMenu.getId())
-                .name(updateMenu.getName())
-                .price(updateMenu.getPrice())
-                .build();
+        return parseMenuToMenuResponse(updateMenu);
     }
 
-    @Override
-    public void deleteById(String id) {
-        Menu menuToDelete = findByIdOrThrowNotFound(id);
-        menuRepository.delete(menuToDelete);
-    }
-
+    @Transactional(readOnly = true)
     public Menu findByIdOrThrowNotFound(String id){
         return menuRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
+    }
+
+    private MenuResponse parseMenuToMenuResponse(Menu menu){
+        return MenuResponse.builder()
+                .id(menu.getId())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .build();
     }
 }

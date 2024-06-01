@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -28,6 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ValidationUtil validationUtil;
     private final UserService userService;
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public CustomerResponse create(Customer customer) {
         validationUtil.validate(customer);
@@ -45,11 +47,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Customer entityById(String id) {
         return findByIdOrThrowNotFound(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CustomerResponse getById(String id) {
         Customer customerFound = customerRepository.findById(id)
@@ -57,6 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
         return parseCustomerToCustomerResponse(customerFound);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Customer> getAll(SearchCustomerRequest request) {
         if(request.getPage() <= 0) {
@@ -88,11 +93,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public CustomerResponse update(UpdateCustomerRequest request) {
         validationUtil.validate(request);
-        Customer customerToUpdate = entityById(request.getId());
 
+        Customer customerToUpdate = entityById(request.getId());
         UserAccount userAccount = userService.getByContext();
 
         if(!userAccount.getId().equals(customerToUpdate.getUserAccount().getId())) {
@@ -106,19 +112,13 @@ public class CustomerServiceImpl implements CustomerService {
         return parseCustomerToCustomerResponse(customerToUpdate);
     }
 
-    @Override
-    public void deleteById(String id) {
-        Customer customerToDelete = findByIdOrThrowNotFound(id);
-        customerRepository.delete(customerToDelete);
-    }
-
+    @Transactional(readOnly = true)
     public Customer findByIdOrThrowNotFound(String id){
         return customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND));
     }
 
     private CustomerResponse parseCustomerToCustomerResponse(Customer customer){
-
         String userId;
         if(customer.getUserAccount() == null){
             userId = null;

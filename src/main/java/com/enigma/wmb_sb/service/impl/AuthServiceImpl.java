@@ -12,6 +12,7 @@ import com.enigma.wmb_sb.service.AuthService;
 import com.enigma.wmb_sb.service.CustomerService;
 import com.enigma.wmb_sb.service.JwtService;
 import com.enigma.wmb_sb.service.RoleService;
+import com.enigma.wmb_sb.utils.ValidationUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final CustomerService customerService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final ValidationUtil validationUtil;
 
     @Value("${enigma_shop.superadmin.username}")
     private String superAdminUsername;
@@ -67,8 +69,9 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse register(AuthRequest request) throws DataIntegrityViolationException {
-        Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
+        validationUtil.validate(request);
 
+        Role role = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
         UserAccount account = UserAccount.builder()
@@ -95,9 +98,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse registerAdmin(AuthRequest request) {
+        validationUtil.validate(request);
+
         Role roleAdmin = roleService.getOrSave(UserRole.ROLE_ADMIN);
         Role roleCustomer = roleService.getOrSave(UserRole.ROLE_CUSTOMER);
-
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
         UserAccount account = UserAccount.builder()
@@ -120,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(readOnly = true)
     @Override
     public LoginResponse login(AuthRequest request) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(

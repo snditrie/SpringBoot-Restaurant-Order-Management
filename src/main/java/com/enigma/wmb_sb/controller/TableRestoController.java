@@ -62,13 +62,4 @@ public class TableRestoController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<?>> deleteTable(@PathVariable String id){
-        tableRestoService.deleteById(id);
-        CommonResponse<TableResto> response = CommonResponse.<TableResto>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_DELETE_DATA)
-                .build();
-        return ResponseEntity.ok(response);
-    }
 }

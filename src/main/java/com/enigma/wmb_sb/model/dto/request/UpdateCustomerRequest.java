@@ -2,12 +2,10 @@ package com.enigma.wmb_sb.model.dto.request;
 
 import com.enigma.wmb_sb.constant.ResponseMessage;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

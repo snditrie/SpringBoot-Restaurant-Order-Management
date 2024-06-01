@@ -83,7 +83,6 @@ public class CustomerController {
                 .data(customerResponses)
                 .paging(pagingResponse)
                 .build();
-
         return ResponseEntity.ok(response);
     }
 
@@ -94,16 +93,6 @@ public class CustomerController {
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .data(updateCustomer)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping(path = APIurl.PATH_VAR_ID)
-    public ResponseEntity<CommonResponse<?>> deleteCustomerById(@PathVariable String id){
-        customerService.deleteById(id);
-        CommonResponse<Customer> response = CommonResponse.<Customer>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
         return ResponseEntity.ok(response);
     }

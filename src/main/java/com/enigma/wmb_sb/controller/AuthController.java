@@ -47,11 +47,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @PostMapping(path = "/register-super-admin")
-//    public ResponseEntity<CommonResponse<?>> registerSuperAdmin(@RequestBody AuthRequest request) {
-//        RegisterResponse registerSuperAdm = authService.
-//    }
-
     @PostMapping(path = "/login")
     public ResponseEntity<CommonResponse<?>> login(@RequestBody AuthRequest request) {
         LoginResponse login = authService.login(request);
