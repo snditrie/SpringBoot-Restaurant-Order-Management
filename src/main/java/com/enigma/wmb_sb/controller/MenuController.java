@@ -93,7 +93,7 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = APIurl.PATH_VAR_ID)
+    @PutMapping
     public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(@RequestBody UpdateMenuRequest request){
         MenuResponse updateMenu = menuService.update(request);
         CommonResponse<MenuResponse> response = CommonResponse.<MenuResponse>builder()
